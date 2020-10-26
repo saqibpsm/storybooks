@@ -31,13 +31,18 @@ if (process.env.NODE_ENV === 'development') {
 
 
 // handlebars helpers
-const { formatDate } = require('./helpers/hbs')
+const { formatDate, truncate, stripTags } = require('./helpers/hbs')
 
 //handlebars
 app.engine('.hbs',
     exphbs({
-        helpers:
-            { formatDate }, defaultLayout: 'main', extname: '.hbs'
+        helpers: {
+            formatDate,
+            stripTags,
+            truncate
+        },
+        defaultLayout: 'main',
+        extname: '.hbs'
     }));
 app.set('view engine', '.hbs');
 
