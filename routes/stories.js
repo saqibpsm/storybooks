@@ -41,6 +41,26 @@ router.get('/', ensureAuth, async (req, res) => {
     }
 })
 
+// @desc    Show Single Story
+// @route   GET /stories/:id
+router.get('/:id', ensureAuth, async (req, res) => {
+    try {
+        let story = await Story.findById(req.params.id)
+            .populate('user')
+            .lean()
+
+        if (!story) {
+            return res.render('errors/404')
+        }
+
+        res.render('stories/show', { story })
+
+    } catch (err) {
+        console.log(err)
+        res.render('errors/404')
+    }
+})
+
 // @desc    show edit page for story
 // @route   GET /stories/edit/:id
 router.get('/edit/:id', ensureAuth, async (req, res) => {
@@ -103,6 +123,24 @@ router.delete('/:id', ensureAuth, async (req, res) => {
         return res.render('errors/500')
     }
 
+})
+
+// @desc    Show user stories
+// @route   GET /stories/user/:userId
+router.get('/user/:userId', ensureAuth, async (req, res) => {
+    try {
+        const stories = await Story.find({
+            user: req.params.userId,
+            status: 'public'
+        })
+            .populate('user')
+            .lean()
+
+        res.render('stories/index', { stories })
+    } catch (err) {
+        console.log(err)
+        res.render('errors/500')
+    }
 })
 
 module.exports = router
